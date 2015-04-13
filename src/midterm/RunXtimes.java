@@ -3,7 +3,7 @@ package midterm;
 import java.util.concurrent.Semaphore;
 
 public class RunXtimes {
-	
+
 	/* Initialization */
 	static int N = 10;
 	static int X = 4;
@@ -41,6 +41,8 @@ class MyProcess extends Thread
 	{
 		id = i;
 	}
+
+	/* More concise version:  Without shared variable protecting semaphores*/
 	public void run()
 	{
 		while(true){
@@ -59,7 +61,7 @@ class MyProcess extends Thread
 			System.out.println("Process " + id + " exited critical section");
 
 			while(true){
-				
+
 				try {
 					RunXtimes.semaphore_count[ RunXtimes.x_counter[id] ].acquire();
 				} catch (InterruptedException e) {
@@ -68,22 +70,21 @@ class MyProcess extends Thread
 					RunXtimes.count[ RunXtimes.x_counter[id]  ]=RunXtimes.X;
 				}
 				RunXtimes.semaphore_count[  RunXtimes.x_counter[id]  ].release();
-				
+
 				RunXtimes.x_counter[id]++;
-				
+
 				if(RunXtimes.x_counter[id]>=RunXtimes.N)	break;
-			
+
 			}
-			
+
 			RunXtimes.x_counter[id] = 0;	
-			
+
 			RunXtimes.count[id]--;
-			
-			
-			
+
 		}
 	}
-	
+
+	/* With some shared variable protecting semaphores*/
 	public void run1()
 	{
 		while(true){
@@ -102,8 +103,8 @@ class MyProcess extends Thread
 			System.out.println("Process " + id + " exited critical section");
 
 			while(true){
-				
-				
+
+
 				try {
 					RunXtimes.semaphore_count[ RunXtimes.x_counter[id] ].acquire();
 				} catch (InterruptedException e) {
@@ -113,7 +114,7 @@ class MyProcess extends Thread
 				}
 				RunXtimes.semaphore_count[  RunXtimes.x_counter[id]  ].release();
 
-				
+
 				try {
 					RunXtimes.semaphore_xcounter[id].acquire();
 				} catch (InterruptedException e) {
@@ -121,12 +122,12 @@ class MyProcess extends Thread
 				RunXtimes.x_counter[id]++;
 				RunXtimes.semaphore_xcounter[id].release();
 				if(RunXtimes.x_counter[id]>=RunXtimes.N)	break;
-			
-			
+
+
 			}
-			
-			
-			
+
+
+
 			try {
 				RunXtimes.semaphore_xcounter[id].acquire();
 			} catch (InterruptedException e) {
@@ -134,9 +135,9 @@ class MyProcess extends Thread
 			RunXtimes.x_counter[id] = 0;	
 			RunXtimes.semaphore_xcounter[id].release();
 
-			
-			
-			
+
+
+
 			try {
 				RunXtimes.semaphore_count[id].acquire();
 			} catch (InterruptedException e) {
@@ -145,9 +146,9 @@ class MyProcess extends Thread
 			}
 			RunXtimes.count[id]--;
 			RunXtimes.semaphore_count[id].release();
-			
-			
-			
+
+
+
 		}
 	}
 }
