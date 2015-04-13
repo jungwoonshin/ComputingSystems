@@ -1,0 +1,35 @@
+Initialization
+
+int X = 4; // number of consecutive run times
+int N =10; //number of processes
+
+Semaphore lock=1;
+Semaphore[] semaphore_count[i]=1 for all 1<=i<=N;
+int[] j[i]=0 for 1<=i<=N ;
+int[] count[i]=X for all 1<=i<=N;
+
+
+
+Process i's code
+
+repeat{
+	while(count[i] <= 0) { }
+	wait(lock);
+	critical section;
+	signal(lock);
+
+	while(true){
+
+		wait(semaphore_count[ j[i] ]);
+		if(j[i]!=i) { count[j[i]] = X; };
+		signal(semaphore_count[ j[i] ]);
+
+		j[i]++;
+
+		if(j[i] >= N ) {break;}
+	}
+
+	j[i] = 0;
+	count[i]--;
+}
+
